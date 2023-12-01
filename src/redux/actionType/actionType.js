@@ -1,0 +1,1 @@
+export const UPDATE_GREETING = 'greeting/UPDATE_GREETING';
