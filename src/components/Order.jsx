@@ -1,18 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { RiArrowRightSLine } from "react-icons/ri";
+import { Link, useNavigate } from "react-router-dom";
+import Header from "./Header";
+import OrderDetails from "./OrderDetails";
 
-const HeaderContainer = styled.div`
-width: 100%;
-box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
-height: 50px;
--`;
-
-const TopNav = styled.h2`
-  margin-left:30px;
-  padding-top:10px;
-  font-family: "Inter", sans-serif;
-`;
 
 const OrderContainer = styled.div`
   margin-top: 20px;
@@ -43,20 +35,36 @@ const OrderNumberContainer = styled.div`
 `;
 
 function Order() {
-  const orders = ["23331ABC", "23332DEF", "23333GHI"];
+  const navigate = useNavigate();
+
+  const orders = [
+    "23331ABC",
+    "23332DEF",
+    "23333GHI",
+    "23333JKL",
+    "23333MNO",
+    "23333PQR",
+    "23333STU",
+    "23333VWX",
+    "23333XYZ",
+  ];
+
+  const handleOrderClick = (orderId) => {
+    navigate(`/order-details/${orderId}`);
+  };
 
   return (
     <div>
-      <HeaderContainer>
-        <TopNav>Orders</TopNav>
-      </HeaderContainer>
+     <Header/>
       <OrderContainer>
         <OrderNumberContainer>
           {orders.map((order, index) => (
-            <OrderNumber key={index}>
-              Order {order}
-              <ArrowIcon />
-            </OrderNumber>
+            <div key={index} onClick={() => handleOrderClick(order)}>
+              <OrderNumber>
+                Order {order}
+                <ArrowIcon />
+              </OrderNumber>
+            </div>
           ))}
         </OrderNumberContainer>
       </OrderContainer>
