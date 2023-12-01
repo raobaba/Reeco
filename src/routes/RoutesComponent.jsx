@@ -8,7 +8,7 @@ import Analytics from '../components/Analytics';
 function RoutesComponent() {
   return (
     <Routes>
-      <Route path="/reeco" element={<Reeco />} />
+      <Route path="/" element={<Reeco />} />
       <Route path="/store" element={<Store />} />
       <Route path="/order" element={<Order />} />
       <Route path="/analytics" element={<Analytics />} />

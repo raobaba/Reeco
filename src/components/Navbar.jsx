@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FaShoppingCart, FaAngleDown } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGreeting } from "../redux/actions/action.js";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -79,6 +80,16 @@ const GreetingDiv = styled.div`
     text-decoration: underline;
   }
 `;
+const SectionLink = styled(Link)`
+  margin-right: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 function Navbar() {
   const dispatch = useDispatch();
@@ -104,15 +115,15 @@ function Navbar() {
   return (
     <Container>
       <LeftSection>
-        <Section>Reeco</Section>
-        <Section>Store</Section>
-        <Section>Orders</Section>
-        <Section>Analytics</Section>
+        <SectionLink to="/">Reeco</SectionLink>
+        <SectionLink to="/store">Store</SectionLink>
+        <SectionLink to="/order">Orders</SectionLink>
+        <SectionLink to="/analytics">Analytics</SectionLink>
       </LeftSection>
       <RightSection>
         <FaShoppingCart size={20} color="white" />
         <GreetingDiv onClick={handleGreetingUpdate}>
-          Hello, {greeting} <FaAngleDown /> 
+          Hello, {greeting} <FaAngleDown />
         </GreetingDiv>
         <Modal isOpen={isModalOpen}>
           <ModalContent>
