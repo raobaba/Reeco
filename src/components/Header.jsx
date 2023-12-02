@@ -28,11 +28,45 @@ const ArrowIcon = styled(RiArrowRightSLine)`
 
 const OrderId = styled.h4`
   font-size: 20px;
-  margin-left: 20px; 
+  margin-left: 20px;
 `;
 
 const OrderIdContainer = styled.div`
   margin-left: 10px;
+`;
+
+const Detailed = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-family: "Inter", sans-serif;
+  margin-bottom: 10px;
+`;
+
+const Left = styled.div``;
+const Right = styled.div`
+  margin-right: 30px;
+`;
+
+const BackButton = styled.button`
+  padding: 8px 16px;
+  margin-right: 10px;
+  font-size: 14px;
+  color: #4caf50;
+  background-color: #f0f0f0;
+  border: 1px solid #4caf50;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+`;
+
+const ApproveButton = styled.button`
+  padding: 9px 16px;
+  font-size: 14px;
+  background-color: rgb(30, 99, 63);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
 `;
 
 function Header() {
@@ -52,7 +86,15 @@ function Header() {
   return (
     <HeaderContainer>
       <TopNav>
-        <Link to="/order" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/order"
+          style={{ textDecoration: "none", color: "inherit" }}
+          css={`
+            &:hover {
+              text-decoration: underline;
+            }
+          `}
+        >
           Orders
         </Link>{" "}
         {orderId ? <ArrowIcon /> : ""}
@@ -62,9 +104,26 @@ function Header() {
           </Link>
         )}
       </TopNav>
-      <OrderIdContainer>
-        {orderId && <OrderId>Order {orderId}</OrderId>}
-      </OrderIdContainer>
+      {orderId && (
+        <Detailed>
+          <Left>
+            <OrderIdContainer>
+              <OrderId>Order {orderId}</OrderId>
+            </OrderIdContainer>
+          </Left>
+          <Right>
+            <BackButton>
+              <Link
+                to="/order"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Back
+              </Link>
+            </BackButton>
+            <ApproveButton>Approve Order</ApproveButton>
+          </Right>
+        </Detailed>
+      )}
     </HeaderContainer>
   );
 }
