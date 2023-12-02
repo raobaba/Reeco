@@ -206,7 +206,7 @@ const EditModalContent = styled.div`
   padding: 20px;
   border-radius: 8px;
   width: 600px;
-  height: 400px;
+  height: 415px;
 `;
 
 const EditInputContainer = styled.div`
@@ -215,7 +215,8 @@ const EditInputContainer = styled.div`
   flex-direction: column;
   h4 {
     margin-bottom: 0;
-    font-weight: 500;
+    font-size:20px;
+    font-weight: 700;
   }
 
   display: flex;
@@ -270,21 +271,50 @@ const EditModalInput = styled.input`
 
 const EditButtonContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content:flex-end;
+  gap:10px;
   margin-top: 20px;
+  margin-bottom:10px;
 
   button {
     padding: 8px 16px;
     font-size: 14px;
     border-radius: 20px;
     cursor: pointer;
-    width: 45%;
+    border:none;
+
+    width: 15%;
+    &:nth-child(1){
+      background-color: rgb(255,255,255);
+    }
+    &:nth-child(2) {
+      background-color: rgb(30,99,63);
+      color: white;
+    }
   }
+ 
 `;
+
+const OptionalButton = styled.button`
+  border:0.1px solid grey;
+  height:30px;
+  background-color:white;
+  border-radius:15px;
+  font-weight:500;
+  color:grey;
+`
 
 const TotalCountDiv = styled.div`
   display: flex;
   gap: 100px;
+`;
+
+const TruncatedH4 = styled.h4`
+  white-space: nowrap;
+  overflow: hidden;
+  font-weight:700;
+  text-overflow: ellipsis;
+  max-width: 600px; /* Adjust the max-width to your desired value */
 `;
 
 function ManageOrder() {
@@ -628,7 +658,8 @@ function ManageOrder() {
         <EditModalOverlay>
           <EditModalContent>
             <EditInputContainer>
-              <h4>{editedItem.productName}</h4>
+              <TruncatedH4>{editedItem.productName}</TruncatedH4>
+              <h4 style={{marginRight:"430px",color:"grey"}}>American Roland</h4>
               <div>
                 <div>
                   <img src={Avocado} alt="Apple_logo" />
@@ -684,12 +715,21 @@ function ManageOrder() {
                   <br />
                   <TotalCountDiv>
                     <label style={{ marginLeft: "40px" }}>Total</label>
-                    <p style={{ marginTop: "-2px" }}>${editedItem.total}</p>
+                    <p style={{ marginTop: "-0.1px" }}>${editedItem.total}</p>
                   </TotalCountDiv>
                 </div>
               </div>
+              
             </EditInputContainer>
-            {/* Add similar sections for other fields (Price, Quantity, Total) */}
+            <div>
+              <h4>Choose reason <label style={{color:'gray'}}>(optional)</label></h4>
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:"20px"}}>
+                <OptionalButton>Missing Product</OptionalButton>
+                <OptionalButton>Quantity is not the same</OptionalButton>
+                <OptionalButton>Price is not the same</OptionalButton>
+                <OptionalButton>Other</OptionalButton>
+              </div>
+            </div>
             <EditButtonContainer>
               <button onClick={closeEditModal}>Cancel</button>
               <button>Send</button>
