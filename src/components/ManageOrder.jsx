@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { BsShieldFillCheck } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import { IoCheckmark } from "react-icons/io5";
-import { RxCross2 } from "react-icons/rx";
+import { RxCross2, RxPadding } from "react-icons/rx";
 import Avocado from "../assets/Avocado Hass.jpg";
 
 const ManageOrderContainer = styled.div`
@@ -195,6 +194,7 @@ function ManageOrder() {
   const [checked, setChecked] = useState(false);
   const [urgent, setUrgent] = useState(false);
   const [itemsList, setItemsList] = useState([]);
+  const [itemColors, setItemColors] = useState([]);
   const [currentItemIndex, setCurrentItemIndex] = useState(null);
   const [newItem, setNewItem] = useState({
     productName: "",
@@ -204,6 +204,10 @@ function ManageOrder() {
     total: "",
     status: "",
   });
+
+  useEffect(() => {
+    setItemColors(Array(itemsList.length).fill(""));
+  }, [itemsList]);
 
   const openUrgencyModal = (index) => {
     setCurrentItemIndex(index);
@@ -231,43 +235,56 @@ function ManageOrder() {
   };
 
   const handleAddItem = () => {
-    setItemsList([...itemsList, newItem]);
-    console.log("New item:", newItem);
-    closeModal();
-    setNewItem({
+    const newItem = {
       productName: "",
       brand: "",
       price: "",
       quantity: "",
       total: "",
-      status: "",
-    });
+      status: "Pending",
+    };
+    closeModal();
+    setItemsList([...itemsList, newItem]);
   };
 
   const handleStatusUpdate = (index) => {
     const updatedItemsList = [...itemsList];
-    updatedItemsList[index].status = "Approved";
-    updatedItemsList[index].checked = !updatedItemsList[index].checked;
-    setItemsList(updatedItemsList);
-    setChecked(!checked);
-    setUrgent(false);
+    if (updatedItemsList[index].status !== "Approved") {
+      updatedItemsList[index].status = "Approved";
+      updatedItemsList[index].checked = true;
+      setItemsList(updatedItemsList);
+      setUrgent(false);
+      handleColorChange(index, "green");
+    }
   };
 
   const handleUrgencyConfirmation = (index, confirmed) => {
     const updatedItemsList = [...itemsList];
-    if (confirmed) {
-      updatedItemsList[index].status = "Urgent";
-    } else {
-      updatedItemsList[index].status = "Missing-urgent";
+    const currentStatus = updatedItemsList[index].status;
+
+    if (
+      currentStatus !== "Approved" &&
+      currentStatus !== "Urgent" &&
+      currentStatus !== "Missing-urgent"
+    ) {
+      if (confirmed) {
+        updatedItemsList[index].status = "Urgent";
+      } else {
+        updatedItemsList[index].status = "Missing-urgent";
+      }
+      updatedItemsList[index].checked = !updatedItemsList[index].checked;
+      setItemsList(updatedItemsList);
+      closeUrgencyModal();
+      setUrgent(true);
+      handleColorChange(index, "red");
     }
-    updatedItemsList[index].checked = !updatedItemsList[index].checked;
-    setItemsList(updatedItemsList);
-    closeUrgencyModal();
-    setUrgent(!urgent);
-    setChecked(false);
   };
-  console.log("checked", checked);
-  console.log("urgent", urgent);
+
+  const handleColorChange = (index, color) => {
+    const newColors = [...itemColors];
+    newColors[index] = color;
+    setItemColors(newColors);
+  };
 
   return (
     <ManageOrderContainer>
@@ -286,9 +303,7 @@ function ManageOrder() {
         <Left>
           <AddButton onClick={openModal}>Add Item</AddButton>
           <Icon>
-            <BsShieldFillCheck
-              style={{ marginRight: "40px", fontSize: "30px" }}
-            />
+            <RxPadding style={{ marginRight: "40px", fontSize: "30px" }} />
           </Icon>
           {isModalOpen && (
             <ModalOverlay>
@@ -381,16 +396,26 @@ function ManageOrder() {
                   style={{
                     width: "auto",
                     minWidth: "100px",
-                    color: "white",
+                    color:
+                      itemColors[index] ||
+                      (row.status === "Pending" ? "black" : "white"),
                     marginTop: "1px",
                     textAlign: "start",
                     height: "20px",
                     paddingLeft: "10px",
                     fontWeight: "500",
-                    border: "1px solid black",
-                    backgroundColor: row.checked ? "green" : "red",
+                    backgroundColor:
+                      row.status === "Pending"
+                        ? ""
+                        : itemsList[index].status === "Approved"
+                        ? "green"
+                        : itemsList[index].status === "Urgent" ||
+                          itemsList[index].status === "Missing-urgent"
+                        ? "red"
+                        : row.checked
+                        ? "green"
+                        : "red",
                     borderRadius: "20px",
-                    display: row.checked || urgent ? "block" : "none",
                   }}
                 >
                   {row.status}
@@ -408,7 +433,17 @@ function ManageOrder() {
                         fontSize: "22px",
                         fontWeight: "500",
                         cursor: "pointer",
-                        color: checked ? "green" : "black",
+                        color:
+                          row.status === "Pending"
+                            ? ""
+                            : itemsList[index].status === "Approved"
+                            ? "green"
+                            : itemsList[index].status === "Urgent" ||
+                              itemsList[index].status === "Missing-urgent"
+                            ? "black"
+                            : row.checked
+                            ? "green"
+                            : "red",
                       }}
                       onClick={() => handleStatusUpdate(index)}
                     />
@@ -419,9 +454,27 @@ function ManageOrder() {
                         fontSize: "22px",
                         fontWeight: "500",
                         cursor: "pointer",
-                        color: urgent ? "red" : "black",
+                        color:
+                          row.status === "Pending"
+                            ? ""
+                            : itemsList[index].status === "Approved"
+                            ? "black"
+                            : itemsList[index].status === "Urgent" ||
+                              itemsList[index].status === "Missing-urgent"
+                            ? "red"
+                            : row.checked
+                            ? "green"
+                            : "red",
                       }}
-                      onClick={() => openUrgencyModal(index)}
+                      onClick={() => {
+                        if (
+                          itemsList[index].status !== "Approved" &&
+                          itemsList[index].status !== "Urgent" &&
+                          itemsList[index].status !== "Missing-urgent"
+                        ) {
+                          openUrgencyModal(index);
+                        }
+                      }}
                     />
                   </div>
                   <div>
@@ -436,6 +489,7 @@ function ManageOrder() {
       {isUrgencyModalOpen && (
         <UrgencyModal>
           <UrgencyModalContent>
+            <h2>Missing Product</h2>
             <p>Is '{itemsList[currentItemIndex]?.productName}' urgent?</p>
             <ButtonContainer>
               <button
