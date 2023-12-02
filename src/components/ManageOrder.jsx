@@ -165,6 +165,7 @@ const UrgencyModal = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 999;
 `;
 
 const UrgencyModalContent = styled.div`
@@ -182,20 +183,19 @@ const ButtonContainer = styled.div`
   button {
     margin: 0 10px;
     padding: 8px 16px;
-    border-radius: 4px;
     cursor: pointer;
   }
 `;
 
 function ManageOrder() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [checkUrgent,setCheckUrgent] = useState(false);
-  const handleInputChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
+  const [isUrgencyModalOpen, setIsUrgencyModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [checked, setChecked] = useState(false);
+  const [urgent, setUrgent] = useState(false);
+  const [itemsList, setItemsList] = useState([]);
+  const [currentItemIndex, setCurrentItemIndex] = useState(null);
   const [newItem, setNewItem] = useState({
     productName: "",
     brand: "",
@@ -205,7 +205,18 @@ function ManageOrder() {
     status: "",
   });
 
-  const [itemsList, setItemsList] = useState([]);
+  const openUrgencyModal = (index) => {
+    setCurrentItemIndex(index);
+    setIsUrgencyModalOpen(true);
+  };
+
+  const closeUrgencyModal = () => {
+    setIsUrgencyModalOpen(false);
+  };
+
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -236,37 +247,27 @@ function ManageOrder() {
   const handleStatusUpdate = (index) => {
     const updatedItemsList = [...itemsList];
     updatedItemsList[index].status = "Approved";
+    updatedItemsList[index].checked = !updatedItemsList[index].checked;
     setItemsList(updatedItemsList);
-    setChecked(true);
-    setCheckUrgent(false);
-  };
-
-  const [isUrgencyModalOpen, setIsUrgencyModalOpen] = useState(false);
-  const [currentItemIndex, setCurrentItemIndex] = useState(null);
-
-  const openUrgencyModal = (index) => {
-    setCurrentItemIndex(index);
-    setIsUrgencyModalOpen(true);
-  };
-
-  const closeUrgencyModal = () => {
-    setIsUrgencyModalOpen(false);
+    setChecked(!checked);
+    setUrgent(false);
   };
 
   const handleUrgencyConfirmation = (index, confirmed) => {
     const updatedItemsList = [...itemsList];
-
     if (confirmed) {
       updatedItemsList[index].status = "Urgent";
     } else {
       updatedItemsList[index].status = "Missing-urgent";
     }
-
+    updatedItemsList[index].checked = !updatedItemsList[index].checked;
     setItemsList(updatedItemsList);
     closeUrgencyModal();
-    setCheckUrgent(true)
-    setChecked(false)
+    setUrgent(!urgent);
+    setChecked(false);
   };
+  console.log("checked", checked);
+  console.log("urgent", urgent);
 
   return (
     <ManageOrderContainer>
@@ -379,13 +380,17 @@ function ManageOrder() {
                 <div
                   style={{
                     width: "auto",
-                    minWidth:'100px',
+                    minWidth: "100px",
                     color: "white",
-                    marginTop: "7px",
-                    paddingLeft:"10px",
+                    marginTop: "1px",
+                    textAlign: "start",
+                    height: "20px",
+                    paddingLeft: "10px",
                     fontWeight: "500",
-                    backgroundColor:"green",
-                    borderRadius:"20px"
+                    border: "1px solid black",
+                    backgroundColor: row.checked ? "green" : "red",
+                    borderRadius: "20px",
+                    display: row.checked || urgent ? "block" : "none",
                   }}
                 >
                   {row.status}
@@ -393,7 +398,7 @@ function ManageOrder() {
                 <div
                   style={{
                     display: "flex",
-                    width: "170px",
+                    width: "150px",
                     justifyContent: "space-evenly",
                   }}
                 >
@@ -403,54 +408,21 @@ function ManageOrder() {
                         fontSize: "22px",
                         fontWeight: "500",
                         cursor: "pointer",
-                        color: checked ? "green" : "inherit",
+                        color: checked ? "green" : "black",
                       }}
                       onClick={() => handleStatusUpdate(index)}
                     />
                   </div>
                   <div>
                     <RxCross2
-                       style={{
+                      style={{
                         fontSize: "22px",
                         fontWeight: "500",
                         cursor: "pointer",
-                        color: checkUrgent ? "red" : "inherit",
+                        color: urgent ? "red" : "black",
                       }}
                       onClick={() => openUrgencyModal(index)}
                     />
-
-                    {isUrgencyModalOpen && (
-                      <UrgencyModal>
-                        <UrgencyModalContent>
-                          <p>
-                            Is '{itemsList[currentItemIndex]?.productName}'
-                            urgent?
-                          </p>
-                          <ButtonContainer>
-                            <button
-                              onClick={() =>
-                                handleUrgencyConfirmation(
-                                  currentItemIndex,
-                                  true
-                                )
-                              }
-                            >
-                              Yes
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleUrgencyConfirmation(
-                                  currentItemIndex,
-                                  false
-                                )
-                              }
-                            >
-                              No
-                            </button>
-                          </ButtonContainer>
-                        </UrgencyModalContent>
-                      </UrgencyModal>
-                    )}
                   </div>
                   <div>
                     <button>Edit</button>
@@ -461,6 +433,29 @@ function ManageOrder() {
           ))}
         </tbody>
       </Table>
+      {isUrgencyModalOpen && (
+        <UrgencyModal>
+          <UrgencyModalContent>
+            <p>Is '{itemsList[currentItemIndex]?.productName}' urgent?</p>
+            <ButtonContainer>
+              <button
+                onClick={() =>
+                  handleUrgencyConfirmation(currentItemIndex, true)
+                }
+              >
+                Yes
+              </button>
+              <button
+                onClick={() =>
+                  handleUrgencyConfirmation(currentItemIndex, false)
+                }
+              >
+                No
+              </button>
+            </ButtonContainer>
+          </UrgencyModalContent>
+        </UrgencyModal>
+      )}
     </ManageOrderContainer>
   );
 }
