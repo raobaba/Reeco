@@ -155,9 +155,42 @@ const AddModalButton = styled.button`
   cursor: pointer;
 `;
 
+const UrgencyModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const UrgencyModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+
+  button {
+    margin: 0 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+`;
+
 function ManageOrder() {
   const [searchQuery, setSearchQuery] = useState("");
   const [checked, setChecked] = useState(false);
+  const [checkUrgent,setCheckUrgent] = useState(false);
   const handleInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -205,6 +238,34 @@ function ManageOrder() {
     updatedItemsList[index].status = "Approved";
     setItemsList(updatedItemsList);
     setChecked(true);
+    setCheckUrgent(false);
+  };
+
+  const [isUrgencyModalOpen, setIsUrgencyModalOpen] = useState(false);
+  const [currentItemIndex, setCurrentItemIndex] = useState(null);
+
+  const openUrgencyModal = (index) => {
+    setCurrentItemIndex(index);
+    setIsUrgencyModalOpen(true);
+  };
+
+  const closeUrgencyModal = () => {
+    setIsUrgencyModalOpen(false);
+  };
+
+  const handleUrgencyConfirmation = (index, confirmed) => {
+    const updatedItemsList = [...itemsList];
+
+    if (confirmed) {
+      updatedItemsList[index].status = "Urgent";
+    } else {
+      updatedItemsList[index].status = "Missing-urgent";
+    }
+
+    setItemsList(updatedItemsList);
+    closeUrgencyModal();
+    setCheckUrgent(true)
+    setChecked(false)
   };
 
   return (
@@ -308,8 +369,27 @@ function ManageOrder() {
               <td style={{ width: "90px" }}>{row.price}</td>
               <td style={{ width: "80px" }}>{row.quantity}</td>
               <td style={{ width: "70px" }}>{row.total}</td>
-              <td style={{ display: "flex", justifyContent: "space-evenly",marginTop:'4px' }}>
-                <div style={{ width: "100px",color:'green',marginTop:'5px',fontWeight:'500' }}>{row.status}</div>
+              <td
+                style={{
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                  marginTop: "4px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "auto",
+                    minWidth:'100px',
+                    color: "white",
+                    marginTop: "7px",
+                    paddingLeft:"10px",
+                    fontWeight: "500",
+                    backgroundColor:"green",
+                    borderRadius:"20px"
+                  }}
+                >
+                  {row.status}
+                </div>
                 <div
                   style={{
                     display: "flex",
@@ -321,7 +401,7 @@ function ManageOrder() {
                     <IoCheckmark
                       style={{
                         fontSize: "22px",
-                        fontWeight:"500",
+                        fontWeight: "500",
                         cursor: "pointer",
                         color: checked ? "green" : "inherit",
                       }}
@@ -329,7 +409,48 @@ function ManageOrder() {
                     />
                   </div>
                   <div>
-                    <RxCross2 style={{ fontSize: "18px", cursor: "pointer" }} />
+                    <RxCross2
+                       style={{
+                        fontSize: "22px",
+                        fontWeight: "500",
+                        cursor: "pointer",
+                        color: checkUrgent ? "red" : "inherit",
+                      }}
+                      onClick={() => openUrgencyModal(index)}
+                    />
+
+                    {isUrgencyModalOpen && (
+                      <UrgencyModal>
+                        <UrgencyModalContent>
+                          <p>
+                            Is '{itemsList[currentItemIndex]?.productName}'
+                            urgent?
+                          </p>
+                          <ButtonContainer>
+                            <button
+                              onClick={() =>
+                                handleUrgencyConfirmation(
+                                  currentItemIndex,
+                                  true
+                                )
+                              }
+                            >
+                              Yes
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleUrgencyConfirmation(
+                                  currentItemIndex,
+                                  false
+                                )
+                              }
+                            >
+                              No
+                            </button>
+                          </ButtonContainer>
+                        </UrgencyModalContent>
+                      </UrgencyModal>
+                    )}
                   </div>
                   <div>
                     <button>Edit</button>
