@@ -4,6 +4,8 @@ import { FaSearch } from "react-icons/fa";
 import { IoCheckmark } from "react-icons/io5";
 import { RxCross2, RxPadding } from "react-icons/rx";
 import Avocado from "../assets/Avocado Hass.jpg";
+import { IoMdAddCircle } from "react-icons/io";
+import { FaCircleMinus } from "react-icons/fa6";
 
 const ManageOrderContainer = styled.div`
   width: 75%;
@@ -186,10 +188,112 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const EditModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
+
+const EditModalContent = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 600px;
+  height: 400px;
+`;
+
+const EditInputContainer = styled.div`
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  h4 {
+    margin-bottom: 0;
+    font-weight: 500;
+  }
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & > div {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    height: 200px;
+  }
+
+  & > div > div:first-child {
+    width: 200px;
+    height: 100%;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  & > div > div:last-child {
+    width: 350px;
+
+    label {
+      margin-bottom: 5px;
+    }
+
+    p {
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+    label {
+      margin-bottom: 5px;
+    }
+    label,
+    input {
+      margin-bottom: 15px;
+    }
+  }
+`;
+
+const EditModalInput = styled.input`
+  padding: 5px;
+  width: 60px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+`;
+
+const EditButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 45%;
+  }
+`;
+
+const TotalCountDiv = styled.div`
+  display: flex;
+  gap: 100px;
+`;
+
 function ManageOrder() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isUrgencyModalOpen, setIsUrgencyModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedItem, setEditedItem] = useState({});
 
   const [checked, setChecked] = useState(false);
   const [urgent, setUrgent] = useState(false);
@@ -204,6 +308,15 @@ function ManageOrder() {
     total: "",
     status: "",
   });
+
+  const openEditModal = (index) => {
+    setEditedItem(itemsList[index]);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+  };
 
   useEffect(() => {
     setItemColors(Array(itemsList.length).fill(""));
@@ -236,11 +349,12 @@ function ManageOrder() {
 
   const handleAddItem = () => {
     const newItem = {
-      productName: "",
-      brand: "",
-      price: "",
-      quantity: "",
-      total: "",
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: "0",
+      total: "0",
       status: "Pending",
     };
     closeModal();
@@ -381,9 +495,9 @@ function ManageOrder() {
                   <div>{row.productName}</div>
                 </ProductImage>
               </td>
-              <td style={{ width: "140px" }}>{row.brand}</td>
-              <td style={{ width: "90px" }}>{row.price}</td>
-              <td style={{ width: "80px" }}>{row.quantity}</td>
+              <td style={{ width: "110px" }}>{row.brand} </td>
+              <td style={{ width: "110px" }}>${row.price}/ 6+1LB</td>
+              <td style={{ width: "80px" }}>{row.quantity}* 6+1LB</td>
               <td style={{ width: "70px" }}>{row.total}</td>
               <td
                 style={{
@@ -478,7 +592,7 @@ function ManageOrder() {
                     />
                   </div>
                   <div>
-                    <button>Edit</button>
+                    <button onClick={() => openEditModal(index)}>Edit</button>
                   </div>
                 </div>
               </td>
@@ -509,6 +623,79 @@ function ManageOrder() {
             </ButtonContainer>
           </UrgencyModalContent>
         </UrgencyModal>
+      )}
+      {isEditModalOpen && (
+        <EditModalOverlay>
+          <EditModalContent>
+            <EditInputContainer>
+              <h4>{editedItem.productName}</h4>
+              <div>
+                <div>
+                  <img src={Avocado} alt="Apple_logo" />
+                </div>
+                <div>
+                  <label style={{ marginLeft: "40px" }}>Price($)</label>
+                  <EditModalInput
+                    type="text"
+                    style={{ marginLeft: "60px" }}
+                    value={editedItem.price}
+                    onChange={(e) =>
+                      setEditedItem({ ...editedItem, price: e.target.value })
+                    }
+                  />
+                  <label style={{ marginLeft: "40px" }}>/ 6+1LB</label>
+                  <br />
+
+                  <div
+                    style={{ display: "flex", gap: "1px", marginTop: "15px" }}
+                  >
+                    <label style={{ marginLeft: "40px" }}>Quantity</label>
+                    <FaCircleMinus
+                      style={{
+                        cursor: "pointer",
+                        color: "green",
+                        marginLeft: "25px",
+                        fontSize: "26px",
+                        marginTop:"-2px"
+                      }}
+                    />
+                    <EditModalInput
+                      type="text"
+                      style={{ marginTop: "-3px",marginLeft:"5px" }}
+                      value={editedItem.quantity}
+                      onChange={(e) =>
+                        setEditedItem({
+                          ...editedItem,
+                          quantity: e.target.value,
+                        })
+                      }
+                    />
+                    <IoMdAddCircle
+                      style={{
+                        cursor: "pointer",
+                        color: "green",
+                        fontSize: "30px",
+                        marginTop: "-4px",
+                      }}
+                    />
+                    <label style={{marginLeft:"5px"}}>* 6+1LB</label>
+                  </div>
+
+                  <br />
+                  <TotalCountDiv>
+                    <label style={{ marginLeft: "40px" }}>Total</label>
+                    <p style={{ marginTop: "-2px" }}>${editedItem.total}</p>
+                  </TotalCountDiv>
+                </div>
+              </div>
+            </EditInputContainer>
+            {/* Add similar sections for other fields (Price, Quantity, Total) */}
+            <EditButtonContainer>
+              <button onClick={closeEditModal}>Cancel</button>
+              <button>Send</button>
+            </EditButtonContainer>
+          </EditModalContent>
+        </EditModalOverlay>
       )}
     </ManageOrderContainer>
   );
