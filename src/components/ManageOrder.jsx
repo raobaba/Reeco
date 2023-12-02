@@ -157,6 +157,7 @@ const AddModalButton = styled.button`
 
 function ManageOrder() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [checked, setChecked] = useState(false);
   const handleInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -197,6 +198,13 @@ function ManageOrder() {
       total: "",
       status: "",
     });
+  };
+
+  const handleStatusUpdate = (index) => {
+    const updatedItemsList = [...itemsList];
+    updatedItemsList[index].status = "Approved";
+    setItemsList(updatedItemsList);
+    setChecked(true);
   };
 
   return (
@@ -300,8 +308,8 @@ function ManageOrder() {
               <td style={{ width: "90px" }}>{row.price}</td>
               <td style={{ width: "80px" }}>{row.quantity}</td>
               <td style={{ width: "70px" }}>{row.total}</td>
-              <td style={{ display: "flex", justifyContent: "space-evenly" }}>
-                <div style={{ width: "100px" }}></div>
+              <td style={{ display: "flex", justifyContent: "space-evenly",marginTop:'4px' }}>
+                <div style={{ width: "100px",color:'green',marginTop:'5px',fontWeight:'500' }}>{row.status}</div>
                 <div
                   style={{
                     display: "flex",
@@ -311,7 +319,13 @@ function ManageOrder() {
                 >
                   <div>
                     <IoCheckmark
-                      style={{ fontSize: "18px", cursor: "pointer" }}
+                      style={{
+                        fontSize: "22px",
+                        fontWeight:"500",
+                        cursor: "pointer",
+                        color: checked ? "green" : "inherit",
+                      }}
+                      onClick={() => handleStatusUpdate(index)}
                     />
                   </div>
                   <div>
