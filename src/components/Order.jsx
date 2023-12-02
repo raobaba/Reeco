@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
-import OrderDetails from "./OrderDetails";
 
 
 const OrderContainer = styled.div`
