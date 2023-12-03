@@ -215,7 +215,7 @@ const EditInputContainer = styled.div`
   flex-direction: column;
   h4 {
     margin-bottom: 0;
-    font-size:20px;
+    font-size: 20px;
     font-weight: 700;
   }
 
@@ -271,38 +271,38 @@ const EditModalInput = styled.input`
 
 const EditButtonContainer = styled.div`
   display: flex;
-  justify-content:flex-end;
-  gap:10px;
+  justify-content: flex-end;
+  gap: 10px;
   margin-top: 20px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 
   button {
     padding: 8px 16px;
     font-size: 14px;
     border-radius: 20px;
     cursor: pointer;
-    border:none;
+    border: none;
 
     width: 15%;
-    &:nth-child(1){
-      background-color: rgb(255,255,255);
+    &:nth-child(1) {
+      background-color: rgb(255, 255, 255);
     }
     &:nth-child(2) {
-      background-color: rgb(30,99,63);
+      background-color: rgb(30, 99, 63);
       color: white;
     }
   }
- 
 `;
 
 const OptionalButton = styled.button`
-  border:0.1px solid grey;
-  height:30px;
-  background-color:white;
-  border-radius:15px;
-  font-weight:500;
-  color:grey;
-`
+  border: 0.1px solid grey;
+  height: 30px;
+  background-color: white;
+  border-radius: 15px;
+  font-weight: 500;
+  color: grey;
+  cursor: pointer;
+`;
 
 const TotalCountDiv = styled.div`
   display: flex;
@@ -312,7 +312,7 @@ const TotalCountDiv = styled.div`
 const TruncatedH4 = styled.h4`
   white-space: nowrap;
   overflow: hidden;
-  font-weight:700;
+  font-weight: 700;
   text-overflow: ellipsis;
   max-width: 600px; /* Adjust the max-width to your desired value */
 `;
@@ -323,19 +323,76 @@ function ManageOrder() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editedItem, setEditedItem] = useState({});
+  const [editedItem, setEditedItem] = useState({
+    quantity: 1,
+  });
 
   const [checked, setChecked] = useState(false);
   const [urgent, setUrgent] = useState(false);
-  const [itemsList, setItemsList] = useState([]);
+  const [itemsList, setItemsList] = useState([
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: "60.67.03",
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+  ]);
   const [itemColors, setItemColors] = useState([]);
   const [currentItemIndex, setCurrentItemIndex] = useState(null);
   const [newItem, setNewItem] = useState({
     productName: "",
     brand: "",
-    price: "",
-    quantity: "",
-    total: "",
+    price: 0,
+    quantity: 0,
+    total: 0,
     status: "",
   });
 
@@ -378,17 +435,17 @@ function ManageOrder() {
   };
 
   const handleAddItem = () => {
-    const newItem = {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: "0",
-      total: "0",
-      status: "Pending",
-    };
+    const newItemToAdd = { ...newItem, status: "Pending" };
     closeModal();
-    setItemsList([...itemsList, newItem]);
+    setItemsList([...itemsList, newItemToAdd]);
+    setNewItem({
+      productName: "",
+      brand: "",
+      price: 0,
+      quantity: 0,
+      total: 0,
+      status: "",
+    });
   };
 
   const handleStatusUpdate = (index) => {
@@ -429,6 +486,46 @@ function ManageOrder() {
     newColors[index] = color;
     setItemColors(newColors);
   };
+
+  
+  // Function to recalculate total based on price and quantity
+  const recalculateTotal = () => {
+    const totalPrice = editedItem.price * editedItem.quantity;
+    setEditedItem({ ...editedItem, total: totalPrice });
+  };
+
+  // Handlers for changing price and quantity
+  const handlePriceChange = (e) => {
+    setEditedItem({ ...editedItem, price: e.target.value });
+  };
+
+  const handleQuantityChange = (e) => {
+    setEditedItem({ ...editedItem, quantity: e.target.value });
+  };
+
+  useEffect(() => {
+    recalculateTotal();
+  }, [editedItem.price, editedItem.quantity]);
+
+
+  const decreaseQuantity = () => {
+    if (editedItem.quantity > 1) {
+      setEditedItem({
+        ...editedItem,
+        quantity: editedItem.quantity - 1,
+      });
+    }
+  };
+
+  const increaseQuantity = () => {
+    setEditedItem({
+      ...editedItem,
+      quantity: editedItem.quantity + 1,
+    });
+  };
+ 
+
+  console.log(itemsList)
 
   return (
     <ManageOrderContainer>
@@ -473,7 +570,7 @@ function ManageOrder() {
                 <InputContainer>
                   <label>Price</label>
                   <ModalInput
-                    type="text"
+                    type="number"
                     placeholder="Enter Price"
                     value={newItem.price}
                     onChange={(e) => handleModalInputChange(e, "price")}
@@ -482,7 +579,7 @@ function ManageOrder() {
                 <InputContainer>
                   <label>Quantity</label>
                   <ModalInput
-                    type="text"
+                    type="number"
                     placeholder="Enter Product Quantity"
                     value={newItem.quantity}
                     onChange={(e) => handleModalInputChange(e, "quantity")}
@@ -491,7 +588,7 @@ function ManageOrder() {
                 <InputContainer>
                   <label>Total</label>
                   <ModalInput
-                    type="text"
+                    type="number"
                     placeholder="Total"
                     value={newItem.total}
                     onChange={(e) => handleModalInputChange(e, "total")}
@@ -659,7 +756,9 @@ function ManageOrder() {
           <EditModalContent>
             <EditInputContainer>
               <TruncatedH4>{editedItem.productName}</TruncatedH4>
-              <h4 style={{marginRight:"430px",color:"grey"}}>American Roland</h4>
+              <h4 style={{ marginRight: "430px", color: "grey" }}>
+                American Roland
+              </h4>
               <div>
                 <div>
                   <img src={Avocado} alt="Apple_logo" />
@@ -667,12 +766,11 @@ function ManageOrder() {
                 <div>
                   <label style={{ marginLeft: "40px" }}>Price($)</label>
                   <EditModalInput
-                    type="text"
+                    type="number"
                     style={{ marginLeft: "60px" }}
                     value={editedItem.price}
-                    onChange={(e) =>
-                      setEditedItem({ ...editedItem, price: e.target.value })
-                    }
+                    onChange={handlePriceChange}
+                    
                   />
                   <label style={{ marginLeft: "40px" }}>/ 6+1LB</label>
                   <br />
@@ -682,26 +780,23 @@ function ManageOrder() {
                   >
                     <label style={{ marginLeft: "40px" }}>Quantity</label>
                     <FaCircleMinus
+                      onClick={decreaseQuantity}
                       style={{
                         cursor: "pointer",
                         color: "green",
                         marginLeft: "25px",
                         fontSize: "26px",
-                        marginTop:"-2px"
+                        marginTop: "-2px",
                       }}
                     />
                     <EditModalInput
-                      type="text"
-                      style={{ marginTop: "-3px",marginLeft:"5px" }}
+                      type="number"
+                      style={{ marginTop: "-3px", marginLeft: "5px" }}
                       value={editedItem.quantity}
-                      onChange={(e) =>
-                        setEditedItem({
-                          ...editedItem,
-                          quantity: e.target.value,
-                        })
-                      }
+                      onChange={handleQuantityChange}
                     />
                     <IoMdAddCircle
+                      onClick={increaseQuantity}
                       style={{
                         cursor: "pointer",
                         color: "green",
@@ -709,7 +804,7 @@ function ManageOrder() {
                         marginTop: "-4px",
                       }}
                     />
-                    <label style={{marginLeft:"5px"}}>* 6+1LB</label>
+                    <label style={{ marginLeft: "5px" }}>* 6+1LB</label>
                   </div>
 
                   <br />
@@ -719,11 +814,19 @@ function ManageOrder() {
                   </TotalCountDiv>
                 </div>
               </div>
-              
             </EditInputContainer>
             <div>
-              <h4>Choose reason <label style={{color:'gray'}}>(optional)</label></h4>
-              <div style={{display:"flex",justifyContent:"space-between",marginTop:"20px"}}>
+              <h4>
+                Choose reason{" "}
+                <label style={{ color: "gray" }}>(optional)</label>
+              </h4>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "20px",
+                }}
+              >
                 <OptionalButton>Missing Product</OptionalButton>
                 <OptionalButton>Quantity is not the same</OptionalButton>
                 <OptionalButton>Price is not the same</OptionalButton>
