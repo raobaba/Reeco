@@ -15,7 +15,60 @@ const initialState = {
     status: "",
   },
   itemsList: [
-    // Your initial items list here
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 5,
+      total: 0,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 3,
+      total: 0,
+      status: "Pending",
+    },
   ],
   editedItem: {
     quantity: 1,
