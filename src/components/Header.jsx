@@ -10,6 +10,7 @@ const HeaderContainer = styled.div`
   height: auto;
   overflow: auto;
   line-height: 40px;
+
 `;
 
 const TopNav = styled.h2`

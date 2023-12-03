@@ -6,6 +6,26 @@ import { RxCross2, RxPadding } from "react-icons/rx";
 import Avocado from "../assets/Avocado Hass.jpg";
 import { IoMdAddCircle } from "react-icons/io";
 import { FaCircleMinus } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addItem,
+  searchQueryChange,
+  openUrgencyModal,
+  closeUrgencyModal,
+  openModal,
+  closeModal,
+  handleModalInputChange,
+  updateItemStatus,
+  confirmUrgency,
+  changeItemColor,
+  openEditModal,
+  closeEditModal,
+  changeEditItem,
+  changeEditPrice,
+  changeEditQuantity,
+  decreaseEditQuantity,
+  increaseEditQuantity,
+} from "../redux/actions/action";
 
 const ManageOrderContainer = styled.div`
   width: 75%;
@@ -318,6 +338,8 @@ const TruncatedH4 = styled.h4`
 `;
 
 function ManageOrder() {
+  const dispatch = useDispatch();
+  // const itemsList = useSelector((state) => state.mainReducer.itemsList);
   const [searchQuery, setSearchQuery] = useState("");
   const [isUrgencyModalOpen, setIsUrgencyModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -327,64 +349,8 @@ function ManageOrder() {
     quantity: 1,
   });
 
-  const [checked, setChecked] = useState(false);
   const [urgent, setUrgent] = useState(false);
-  const [itemsList, setItemsList] = useState([
-    {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: 0,
-      total: 0,
-      status: "Pending",
-    },
-    {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: 0,
-      total: 0,
-      status: "Pending",
-    },
-    {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: 0,
-      total: 0,
-      status: "Pending",
-    },
-    {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: 0,
-      total: 0,
-      status: "Pending",
-    },
-    {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: 0,
-      total: 0,
-      status: "Pending",
-    },
-    {
-      productName:
-        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
-      brand: "Home Black Labelmany",
-      price: "60.67.03",
-      quantity: 0,
-      total: 0,
-      status: "Pending",
-    },
-  ]);
+
   const [itemColors, setItemColors] = useState([]);
   const [currentItemIndex, setCurrentItemIndex] = useState(null);
   const [newItem, setNewItem] = useState({
@@ -395,6 +361,62 @@ function ManageOrder() {
     total: 0,
     status: "",
   });
+  const [itemsList, setItemsList] = useState([
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: newItem.total,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: newItem.total,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: newItem.total,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 0,
+      total: newItem.total,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 5,
+      total: newItem.total,
+      status: "Pending",
+    },
+    {
+      productName:
+        "Chicken Breast Fillest Boneless matuu maMarinated 6 Ounce raw Invivid",
+      brand: "Home Black Labelmany",
+      price: 60.67,
+      quantity: 3,
+      total: newItem.total,
+      status: "Pending",
+    },
+  ]);
 
   const openEditModal = (index) => {
     setEditedItem(itemsList[index]);
@@ -431,7 +453,20 @@ function ManageOrder() {
   };
 
   const handleModalInputChange = (event, field) => {
-    setNewItem({ ...newItem, [field]: event.target.value });
+    const value = event.target.value;
+    let updatedItem = { ...newItem, [field]: value };
+
+    if (field === "price" || field === "quantity") {
+      const price = parseFloat(updatedItem.price);
+      const quantity = parseFloat(updatedItem.quantity);
+
+      if (!isNaN(price) && !isNaN(quantity)) {
+        const total = price * quantity;
+        updatedItem = { ...updatedItem, total: total };
+      }
+    }
+
+    setNewItem(updatedItem);
   };
 
   const handleAddItem = () => {
@@ -487,7 +522,6 @@ function ManageOrder() {
     setItemColors(newColors);
   };
 
-  
   // Function to recalculate total based on price and quantity
   const recalculateTotal = () => {
     const totalPrice = editedItem.price * editedItem.quantity;
@@ -507,7 +541,6 @@ function ManageOrder() {
     recalculateTotal();
   }, [editedItem.price, editedItem.quantity]);
 
-
   const decreaseQuantity = () => {
     if (editedItem.quantity > 1) {
       setEditedItem({
@@ -523,9 +556,8 @@ function ManageOrder() {
       quantity: editedItem.quantity + 1,
     });
   };
- 
 
-  console.log(itemsList)
+  console.log(itemsList);
 
   return (
     <ManageOrderContainer>
@@ -625,7 +657,7 @@ function ManageOrder() {
               <td style={{ width: "110px" }}>{row.brand} </td>
               <td style={{ width: "110px" }}>${row.price}/ 6+1LB</td>
               <td style={{ width: "80px" }}>{row.quantity}* 6+1LB</td>
-              <td style={{ width: "70px" }}>{row.total}</td>
+              <td style={{ width: "70px" }}>${row.total}</td>
               <td
                 style={{
                   display: "flex",
@@ -770,7 +802,6 @@ function ManageOrder() {
                     style={{ marginLeft: "60px" }}
                     value={editedItem.price}
                     onChange={handlePriceChange}
-                    
                   />
                   <label style={{ marginLeft: "40px" }}>/ 6+1LB</label>
                   <br />

@@ -13,6 +13,9 @@ const Container = styled.div`
   background-color: rgb(30, 99, 63);
   color: white;
   height: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000; 
   font-family: "Inter", sans-serif;
 `;
 
