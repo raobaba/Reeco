@@ -47,7 +47,7 @@ The project's folder structure is organized to maintain a clear separation of co
 1. Clone the Repository:
 
     ```bash
-    git clone https://github.com/raobaba/Reeco/tree/master
+    git clone https://github.com/raobaba/Reeco
     ```
 
 2. Install Dependencies:
